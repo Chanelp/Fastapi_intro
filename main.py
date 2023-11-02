@@ -70,3 +70,12 @@ def get_movie(id: int):
         return [movie for movie in data if movie['id'] == id][0]
     except IndexError:
         return {'Error' : 'Movie not found!'}
+    
+
+# Parametros query
+@app.get(path= "/movies/", summary="Get movie by category")
+def get_movie_by_category(category: str):
+    try:
+        return [movies for movies in data if movies['genre'] == category][0]
+    except IndexError:
+        return {"Error": "Movie in that category not found!"}
