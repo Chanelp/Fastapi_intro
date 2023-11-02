@@ -66,7 +66,7 @@ def get_movies():
 # Parámetros de ruta
 @app.get('/movies/{id}', tags = ["Movies"])
 def get_movie(id: int):
-    for movie in data:
-        if movie['id'] == id:
-            return movie
-    return "There is nothing to see :o"
+    try:
+        return [movie for movie in data if movie['id'] == id][0]
+    except IndexError:
+        return {'Error' : 'Movie not found!'}
