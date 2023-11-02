@@ -59,12 +59,12 @@ def message():
     return "Learning about fastApi"
 
 # Método GET
-@app.get('/movies', tags = ['Movies'])
+@app.get('/movies', tags = ['Movies'], summary= "Get all movies")
 def get_movies():
     return data
 
 # Parámetros de ruta
-@app.get('/movies/{id}', tags = ["Movies"])
+@app.get(path= '/movies/{id}', tags = ["Movies"], summary= "Get one movie")
 def get_movie(id: int):
     try:
         return [movie for movie in data if movie['id'] == id][0]
