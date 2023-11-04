@@ -1,5 +1,5 @@
 # Importar el modulo
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Path, Query
 from db import datos
 from schemas import movie as mv
 
@@ -24,7 +24,7 @@ def get_movies():
 
 # Parámetros de ruta
 @app.get(path= '/movies/{id}', tags = ["Movies"], summary= "Get one movie")
-def get_movie(id: int):
+def get_movie(id: int =  Path(ge=1, le=200)):
     try:
         return [movie for movie in data if movie['id'] == id][0]
     except IndexError:
@@ -32,7 +32,7 @@ def get_movie(id: int):
     
 # Parametros query
 @app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"])
-def get_movie_by_category(category: str):
+def get_movie_by_category(category: str = Query(min_length= 5, max_length= 15)):
     try:
         return [ movies for movies in data if movies['genre'] == category ]
     except IndexError:
