@@ -91,3 +91,20 @@ def register_movie(id: int = Body(),
     new_movie = locals()
     data.append(new_movie)
     return new_movie
+
+# Método PUT
+@app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie")
+def update_movie(id: int, 
+                   title: str = Body(), 
+                   year: int = Body(), 
+                   genre: str = Body(), 
+                   director: str = Body(), 
+                   rating: float =  Body()):
+    for movie in data:
+        if movie['id'] == id:
+            movie['title'] = title
+            movie['year'] =  year
+            movie['genre'] = genre
+            movie['director'] = director
+            movie['rating'] =  rating
+            return data
