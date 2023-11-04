@@ -80,19 +80,14 @@ def get_movie_by_category(category: str):
         return {"Error": "Movies in that category not found!"}
     
 # Método POST
-@app.post(path = "/movies", tags = ["Movies"])
+@app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films")
 def register_movie(id: int = Body(), 
                    title: str = Body(), 
                    year: int = Body(), 
                    genre: str = Body(), 
                    director: str = Body(), 
                    rating: float =  Body()):
-    data.append(
-        {
-            "id": id,
-            "title": title,
-            "year": year,
-            "genre": genre,
-            "director": director,
-            "rating": rating
-        })
+    
+    new_movie = locals()
+    data.append(new_movie)
+    return new_movie
