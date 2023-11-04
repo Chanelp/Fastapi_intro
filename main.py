@@ -1,5 +1,5 @@
 # Importar el modulo
-from fastapi import FastAPI
+from fastapi import FastAPI, Body
 
 import db
 
@@ -71,11 +71,28 @@ def get_movie(id: int):
     except IndexError:
         return {'Error' : 'Movie not found!'}
     
-
 # Parametros query
-@app.get(path= "/movies/", summary="Get movie by category")
+@app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"])
 def get_movie_by_category(category: str):
     try:
-        return [movies for movies in data if movies['genre'] == category][0]
+        return [ movies for movies in data if movies['genre'] == category ]
     except IndexError:
-        return {"Error": "Movie in that category not found!"}
+        return {"Error": "Movies in that category not found!"}
+    
+# Método POST
+@app.post(path = "/movies", tags = ["Movies"])
+def register_movie(id: int = Body(), 
+                   title: str = Body(), 
+                   year: int = Body(), 
+                   genre: str = Body(), 
+                   director: str = Body(), 
+                   rating: float =  Body()):
+    data.append(
+        {
+            "id": id,
+            "title": title,
+            "year": year,
+            "genre": genre,
+            "director": director,
+            "rating": rating
+        })
