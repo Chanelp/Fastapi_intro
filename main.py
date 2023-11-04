@@ -1,7 +1,7 @@
 # Importar el modulo
 from fastapi import FastAPI, Body
-
-import db
+from db import datos
+from schemas import movie as mv
 
 # Crear la aplicación: creando una Instancia de fastapi
 app = FastAPI()
@@ -10,48 +10,7 @@ app = FastAPI()
 app.title = "First Application Programming Interface with FastApi"
 app.version = "0.0.2"
 
-data = [
-        {
-            "id": 1,
-            "title": "The Galactic Adventure",
-            "year": 2020,
-            "genre": "Sci-Fi",
-            "director": "John Director",
-            "rating": 8.0
-        },
-        {
-            "id": 2,
-            "title": "La Gran Comedia",
-            "year": 2019,
-            "genre": "Comedy",
-            "director": "Maria Director",
-            "rating": 7.5
-        },
-        {
-            "id": 3,
-            "title": "Drama in the City",
-            "year": 2021,
-            "genre": "Drama",
-            "director": "Michael Director",
-            "rating": 8.5
-        },
-        {
-            "id": 4,
-            "title": "Mystery Island",
-            "year": 2018,
-            "genre": "Mystery",
-            "director": "Emma Director",
-            "rating": 9.0
-        },
-        {
-            "id": 5,
-            "title": "Aventura Extrema",
-            "year": 2022,
-            "genre": "Adventure",
-            "director": "Daniel Director",
-            "rating": 7.8
-        }
-    ]
+data = datos.data
 
 # Creando un primer endpoint
 @app.get('/', tags = ['Home'])
@@ -81,30 +40,25 @@ def get_movie_by_category(category: str):
     
 # Método POST
 @app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films")
-def register_movie(id: int = Body(), 
-                   title: str = Body(), 
-                   year: int = Body(), 
-                   genre: str = Body(), 
-                   director: str = Body(), 
-                   rating: float =  Body()):
-    
-    new_movie = locals()
-    data.append(new_movie)
+def register_movie(new_movie: mv.Movie):
+    data.append(dict(new_movie))
     return new_movie
 
 # Método PUT
 @app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie")
-def update_movie(id: int, 
-                   title: str = Body(), 
-                   year: int = Body(), 
-                   genre: str = Body(), 
-                   director: str = Body(), 
-                   rating: float =  Body()):
+def update_movie(id: int, film: mv.Movie):
     for movie in data:
         if movie['id'] == id:
-            movie['title'] = title
-            movie['year'] =  year
-            movie['genre'] = genre
-            movie['director'] = director
-            movie['rating'] =  rating
+            movie['title'] = film.title
+            movie['year'] =  film.year
+            movie['genre'] = film.genre
+            movie['director'] = film.director
+            movie['rating'] =  film.rating
             return data
+        
+# Método DELETE
+@app.delete(path = "/movies/{id}", tags = ["Movies"], summary= "Delete a movie")
+def delete_movie(id: int):
+    for movie in data:
+        if movie['id'] == id:
+            data.remove(movie)
