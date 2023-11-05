@@ -1,5 +1,5 @@
 # Importar el modulo
-from fastapi import FastAPI, Body, Path, Query
+from fastapi import FastAPI, Body, Path, Query, status
 from fastapi.responses import JSONResponse
 from typing import List
 
@@ -35,22 +35,22 @@ def get_movie(id: int =  Path(ge=1, le=200)) -> mv.Movie:
         return {'Error' : 'Movie not found!'}
     
 # Parametros query
-@app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"], response_model = List[mv.Movie])
+@app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"], response_model = List[mv.Movie], status_code= status.HTTP_200_OK)
 def get_movie_by_category(category: str = Query(min_length= 5, max_length= 15)) -> List[mv.Movie]:
     try:
         data = [ movies for movies in movies if movies['genre'] == category ]
-        return JSONResponse(content= data)
+        return JSONResponse(content= data, status_code= status.HTTP_200_OK)
     except IndexError:
         return {"Error": "Movies in that category not found!"}
     
 # Método POST
-@app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films", response_model= dict)
+@app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films", response_model= dict, status_code=status.HTTP_201_CREATED)
 def register_movie(new_movie: mv.Movie) -> dict:
     movies.append(dict(new_movie))
-    return JSONResponse(content = {"message":"Movie sucessfully registered!"})
+    return JSONResponse(content = {"message":"Movie sucessfully registered!"}, status_code= status.HTTP_201_CREATED)
 
 # Método PUT
-@app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict)
+@app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict, status_code= status.HTTP_200_OK)
 def update_movie(id: int, film: mv.Movie) -> dict:
     for movie in movies:
         if movie['id'] == id:
@@ -62,9 +62,9 @@ def update_movie(id: int, film: mv.Movie) -> dict:
             return JSONResponse(content = {"message":"Movie successfully updated!"})
         
 # Método DELETE
-@app.delete(path = "/movies/{id}", tags = ["Movies"], summary= "Delete a movie", response_model = dict)
+@app.delete(path = "/movies/{id}", tags = ["Movies"], summary= "Delete a movie", response_model = dict, status_code= status.HTTP_200_OK)
 def delete_movie(id: int) -> dict:
     for movie in movies:
         if movie['id'] == id:
             movies.remove(movie)
-            return JSONResponse(content= {"message":"Movie successfully removed!"})
+            return JSONResponse(content= {"message":"Movie successfully removed!"}, status_code= status.HTTP_200_OK)
