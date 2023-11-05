@@ -5,7 +5,8 @@ from typing import List
 
 from db import datos
 from schemas import movie as mv
-from schemas import user
+from schemas import user as us
+from jwt_manager import create_token
 
 # Crear la aplicación: creando una Instancia de fastapi
 app = FastAPI()
@@ -52,8 +53,10 @@ def register_movie(new_movie: mv.Movie) -> dict:
 
 # Login
 @app.post(path= "/login", tags = ["Auth"], summary= "Log In")
-def login(user: user.user):
-    return user
+def login(user: us.user):
+    if user.email == "admin@gmail.com" and user.password == "admin":
+        token = create_token(user.model_dump())
+    return JSONResponse(status_code= status.HTTP_200_OK, content= token)
 
 # Método PUT
 @app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict, status_code= status.HTTP_200_OK)
