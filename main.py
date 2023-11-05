@@ -1,5 +1,8 @@
 # Importar el modulo
 from fastapi import FastAPI, Body, Path, Query
+from fastapi.responses import JSONResponse
+from typing import List
+
 from db import datos
 from schemas import movie as mv
 
@@ -10,7 +13,7 @@ app = FastAPI()
 app.title = "First Application Programming Interface with FastApi"
 app.version = "0.0.2"
 
-data = datos.data
+movies = datos.movies
 
 # Creando un primer endpoint
 @app.get('/', tags = ['Home'])
@@ -18,47 +21,50 @@ def message():
     return "Learning about fastApi"
 
 # Método GET
-@app.get('/movies', tags = ['Movies'], summary= "Get all movies")
-def get_movies():
-    return data
+@app.get('/movies', tags = ['Movies'], summary= "Get all movies", response_model = List[mv.Movie])
+def get_movies() -> List[mv.Movie]:
+    return JSONResponse(content = movies)
 
 # Parámetros de ruta
-@app.get(path= '/movies/{id}', tags = ["Movies"], summary= "Get one movie")
-def get_movie(id: int =  Path(ge=1, le=200)):
+@app.get(path= '/movies/{id}', tags = ["Movies"], summary= "Get one movie", response_model = mv.Movie)
+def get_movie(id: int =  Path(ge=1, le=200)) -> mv.Movie:
     try:
-        return [movie for movie in data if movie['id'] == id][0]
+        movie_found = [movie for movie in movies if movie['id'] == id][0]
+        return JSONResponse(content= movie_found)
     except IndexError:
         return {'Error' : 'Movie not found!'}
     
 # Parametros query
-@app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"])
-def get_movie_by_category(category: str = Query(min_length= 5, max_length= 15)):
+@app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"], response_model = List[mv.Movie])
+def get_movie_by_category(category: str = Query(min_length= 5, max_length= 15)) -> List[mv.Movie]:
     try:
-        return [ movies for movies in data if movies['genre'] == category ]
+        data = [ movies for movies in movies if movies['genre'] == category ]
+        return JSONResponse(content= data)
     except IndexError:
         return {"Error": "Movies in that category not found!"}
     
 # Método POST
-@app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films")
-def register_movie(new_movie: mv.Movie):
-    data.append(dict(new_movie))
-    return new_movie
+@app.post(path = "/movies", tags = ["Movies"], summary= "Add a new movie to films", response_model= dict)
+def register_movie(new_movie: mv.Movie) -> dict:
+    movies.append(dict(new_movie))
+    return JSONResponse(content = {"message":"Movie sucessfully registered!"})
 
 # Método PUT
-@app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie")
-def update_movie(id: int, film: mv.Movie):
-    for movie in data:
+@app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict)
+def update_movie(id: int, film: mv.Movie) -> dict:
+    for movie in movies:
         if movie['id'] == id:
             movie['title'] = film.title
             movie['year'] =  film.year
             movie['genre'] = film.genre
             movie['director'] = film.director
             movie['rating'] =  film.rating
-            return data
+            return JSONResponse(content = {"message":"Movie successfully updated!"})
         
 # Método DELETE
-@app.delete(path = "/movies/{id}", tags = ["Movies"], summary= "Delete a movie")
-def delete_movie(id: int):
-    for movie in data:
+@app.delete(path = "/movies/{id}", tags = ["Movies"], summary= "Delete a movie", response_model = dict)
+def delete_movie(id: int) -> dict:
+    for movie in movies:
         if movie['id'] == id:
-            data.remove(movie)
+            movies.remove(movie)
+            return JSONResponse(content= {"message":"Movie successfully removed!"})

@@ -1,4 +1,4 @@
-data = [
+movies = [
         {
             "id": 1,
             "title": "The Galactic Adventure",
