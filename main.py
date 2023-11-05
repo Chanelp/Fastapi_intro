@@ -5,6 +5,7 @@ from typing import List
 
 from db import datos
 from schemas import movie as mv
+from schemas import user
 
 # Crear la aplicación: creando una Instancia de fastapi
 app = FastAPI()
@@ -48,6 +49,11 @@ def get_movie_by_category(category: str = Query(min_length= 5, max_length= 15)) 
 def register_movie(new_movie: mv.Movie) -> dict:
     movies.append(dict(new_movie))
     return JSONResponse(content = {"message":"Movie sucessfully registered!"}, status_code= status.HTTP_201_CREATED)
+
+# Login
+@app.post(path= "/login", tags = ["Auth"], summary= "Log In")
+def login(user: user.user):
+    return user
 
 # Método PUT
 @app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict, status_code= status.HTTP_200_OK)
