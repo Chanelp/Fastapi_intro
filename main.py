@@ -32,7 +32,7 @@ def get_movie(id: int =  Path(ge=1, le=200)) -> mv.Movie:
         movie_found = [movie for movie in movies if movie['id'] == id][0]
         return JSONResponse(content= movie_found)
     except IndexError:
-        return {'Error' : 'Movie not found!'}
+        return JSONResponse(status_code=status.HTTP_404_NOT_FOUND, content= [])
     
 # Parametros query
 @app.get(path= "/movies/", summary="Get movie by category", tags = ["Movies"], response_model = List[mv.Movie], status_code= status.HTTP_200_OK)
