@@ -56,7 +56,9 @@ def register_movie(new_movie: mv.Movie) -> dict:
 def login(user: us.user):
     if user.email == "admin@gmail.com" and user.password == "admin":
         token = create_token(user.model_dump())
-    return JSONResponse(status_code= status.HTTP_200_OK, content= token)
+        return JSONResponse(status_code= status.HTTP_200_OK, content= token)
+    else:
+        return JSONResponse(status_code= status.HTTP_401_UNAUTHORIZED, content= {"message":"Credenciales inválidas, intente de nuevo"})
 
 # Método PUT
 @app.put(path = "/movies/{id}", tags = ["Movies"], summary = "Update movie", response_model = dict, status_code= status.HTTP_200_OK)
