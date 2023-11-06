@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,venv
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,venv
 
+.env
+
 ### Linux ###
 *~
 
