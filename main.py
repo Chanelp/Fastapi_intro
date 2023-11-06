@@ -1,31 +1,21 @@
 # Importar el modulo
-from fastapi import FastAPI, Body, Path, Query, status, Request, HTTPException, Depends
+from fastapi import FastAPI, Body, Path, Query, status, Depends
 from fastapi.responses import JSONResponse
 from typing import Any, Coroutine, List, Optional
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from starlette.requests import Request
 
 from db import datos
 from schemas import movie as mv
 from schemas import user as us
-from jwt_manager import create_token, validate_token
+from jwt_manager import create_token, JWTBearer
 
 # Crear la aplicación: creando una Instancia de fastapi
 app = FastAPI()
 
-# Documentación con Swagger
+# Documentación automática con Swagger
 app.title = "First Application Programming Interface with FastApi"
 app.version = "0.0.2"
 
 movies = datos.movies
-
-# Función para pasar token a las peticiones
-class JWTBearer(HTTPBearer):
-    async def __call__(self, request: Request):
-        auth = await super().__call__(request)
-        data = validate_token(auth.credentials)
-        if data['email'] != "admin@gmail.com":
-            return HTTPException(status_code= 403, detail= "Credentials are not valid!")
 
 # Creando un primer endpoint
 @app.get('/', tags = ['Home'])
